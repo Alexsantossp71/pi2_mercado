@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EconomizaJá Santos - Otimizador de Compras de Supermercado</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .autocomplete-item.active { background: #dcfce7; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+<!-- ==================== HEADER ==================== -->
+<header class="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-lg">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight flex items-center gap-3">
+          <span class="text-2xl">🛒</span> EconomizaJá Santos
+        </h1>
+        <p class="mt-1 text-emerald-100 text-sm md:text-base">
+          Protótipo Integrador - Comparador de Preços de Supermercado
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="inline-flex items-center gap-1 bg-white/15 backdrop-blur px-3 py-1.5 rounded-full text-xs md:text-sm font-medium ring-1 ring-white/20">
+          📍 Santos, SP
+        </span>
+        <span class="inline-flex items-center gap-1 bg-white/15 backdrop-blur px-3 py-1.5 rounded-full text-xs md:text-sm font-medium ring-1 ring-white/20">
+          📏 Raio: 5 km
+        </span>
+        <span class="inline-flex items-center gap-1 bg-white/15 backdrop-blur px-3 py-1.5 rounded-full text-xs md:text-sm font-medium ring-1 ring-white/20">
+          🗓️ Dados atualizados em: 01/08/2026
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 py-8 space-y-10">
+
+  <!-- ==================== CRIADOR DE LISTA ==================== -->
+  <section id="criador" class="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 p-6">
+    <h2 class="text-xl font-bold text-slate-900 mb-1">Crie sua Lista de Compras</h2>
+    <p class="text-sm text-slate-500 mb-5">Busque um produto pelo nome ou categoria e adicione à sua lista.</p>
+
+    <div class="flex flex-col md:flex-row gap-3">
+      <div class="flex-1 relative">
+        <label for="campoBusca" class="sr-only">Buscar produto</label>
+        <input id="campoBusca" type="text" autocomplete="off" placeholder="Buscar produto ou categoria... (ex: arroz, limpeza, leite)"
+               class="w-full border border-slate-300 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">🔍</span>
+        <div id="sugestoes" class="hidden absolute z-20 mt-1 w-full bg-white rounded-xl shadow-xl ring-1 ring-slate-200 max-h-72 overflow-y-auto"></div>
+      </div>
+      <div class="flex gap-2">
+        <select id="selectQtd" class="border border-slate-300 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+          <option value="1">1 un</option><option value="2">2 un</option><option value="3">3 un</option>
+          <option value="4">4 un</option><option value="5">5 un</option><option value="6">6 un</option>
+          <option value="7">7 un</option><option value="8">8 un</option><option value="9">9 un</option>
+          <option value="10">10 un</option>
+        </select>
+        <button id="btnAdicionar" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-3 rounded-xl transition shadow-sm">
+          + Adicionar
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabela da lista -->
+    <div id="listaVazia" class="mt-6 text-center py-8 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
+      <p class="text-4xl mb-2">🛍️</p>
+      <p>Sua lista está vazia. Adicione produtos para começar.</p>
+    </div>
+
+    <div id="tabelaLista" class="hidden mt-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-slate-800">Itens na lista <span id="contagemItens" class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-full ml-2"></span></h3>
+        <button id="btnLimparLista" class="text-red-500 hover:text-red-700 text-sm font-medium">🗑️ Limpar lista</button>
+      </div>
+      <div class="overflow-x-auto rounded-xl ring-1 ring-slate-200">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-100 text-slate-600">
+            <tr>
+              <th class="text-left px-4 py-3">Produto</th>
+              <th class="text-center px-4 py-3">Qtd</th>
+              <th class="text-center px-4 py-3 hidden sm:table-cell">Menor preço</th>
+              <th class="text-center px-4 py-3">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="corpoLista" class="divide-y divide-slate-100 bg-white"></tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 flex flex-col sm:flex-row items-center gap-3">
+        <button id="btnCalcular" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-base px-8 py-4 rounded-2xl shadow-md transition text-center">
+          🔍 CALCULAR MELHOR OPÇÃO DE COMPRA
+        </button>
+        <p class="text-xs text-slate-400">Os preços considerados são fictícios, simulando a concorrência real entre as lojas.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESULTADOS ==================== -->
+  <section id="resultados" class="hidden space-y-8 scroll-mt-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-2xl font-bold text-slate-900">Resultados da Análise</h2>
+      <button id="btnNovaBusca" class="text-emerald-600 hover:text-emerald-800 text-sm font-semibold">← Nova consulta</button>
+    </div>
+
+    <!-- OPÇÃO 1 -->
+    <div class="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 p-6">
+      <div class="flex items-start gap-2 mb-4">
+        <span class="bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-lg">OPÇÃO 1</span>
+        <div>
+          <h3 class="font-bold text-slate-900">Melhor Loja Única</h3>
+          <p class="text-sm text-slate-500">Compre toda a lista em um único mercado.</p>
+        </div>
+      </div>
+      <div id="resultadoLojaUnica" class="grid sm:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- OPÇÃO 2 -->
+    <div class="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 p-6">
+      <div class="flex items-start gap-2 mb-4">
+        <span class="bg-violet-600 text-white text-xs font-bold px-2 py-1 rounded-lg">OPÇÃO 2</span>
+        <div>
+          <h3 class="font-bold text-slate-900">Economia Máxima (Multi-Lojas)</h3>
+          <p class="text-sm text-slate-500">Divida a compra entre até 2 mercados, levando cada produto onde está mais barato.</p>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-gradient-to-br from-violet-600 to-purple-600 text-white rounded-2xl p-6 flex flex-col justify-center">
+          <p class="text-sm opacity-90">Valor total otimizado</p>
+          <p id="valorTotalOtimizado" class="text-4xl font-extrabold mt-1">R$ 0,00</p>
+          <p class="mt-2 text-sm bg-white/20 rounded-lg px-3 py-2 inline-block w-fit">💰 Você economiza <span id="economiaMulti" class="font-extrabold">R$ 0,00</span></p>
+        </div>
+        <div id="divisaoLojas" class="space-y-3"></div>
+      </div>
+    </div>
+
+    <!-- Comparativo Geral -->
+    <div class="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 p-6">
+      <h3 class="font-bold text-slate-900 mb-1">Comparativo Geral</h3>
+      <p class="text-sm text-slate-500 mb-4">Valor total da lista se comprada 100% em cada mercado.</p>
+      <div id="comparativoGeral" class="grid sm:grid-cols-3 gap-4"></div>
+    </div>
+  </section>
+
+  <!-- ==================== MODE CHECKLIST ==================== -->
+  <section id="modoChecklist" class="hidden bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 p-6 scroll-mt-4">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-slate-900">Modo Checklist Presencial</h2>
+      <span id="checklistProgresso" class="text-sm font-semibold text-emerald-600"></span>
+    </div>
+    <p class="text-sm text-slate-500 mb-4">Marque os produtos conforme vai pegando no corredor. A lista é organizada por categoria.</p>
+    <div id="checklistCorpo" class="space-y-4"></div>
+    <button id="btnSairChecklist" class="mt-6 w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-6 py-3 rounded-xl transition">
+      ← Voltar aos resultados
+    </button>
+  </section>
+
+  <!-- ==================== RODAPÉ ==================== -->
+  <footer class="text-center text-xs text-slate-400 py-6 border-t border-slate-200">
+    <p>EconomizaJá Santos - Protótipo Integrador (Projeto Integrador em Computação II - UNIVESP)</p>
+    <p class="mt-1">Dados fictícios para demonstração. Última coleta simulada: 01/08/2026.</p>
+  </footer>
+</main>
+
+<script>
+/* ==================================================================
+   BASE DE DADOS EMBUTIDA (FICTÍCIA)
+   Preços por loja: [Atacadão Santos, Pão de Açúcar - Gonzaga, Carrefour - Ponta da Praia]
+   ================================================================== */
+const LOJAS = {
+  atacadao:  { nome: 'Atacadão Santos',          icone: '🏪', cor: '#e11d48' },
+  pao_azucar:{ nome: 'Pão de Açúcar - Gonzaga',  icone: '🥐', cor: '#7c3aed' },
+  carrefour: { nome: 'Carrefour - Ponta da Praia', icone: '🛍️', cor: '#2563eb' }
+};
+
+const BASE_DADOS = [
+  /* ---------- MERCEARIA ---------- */
+  { id: 1, gtin_ean: '7891000055001', nome: 'Arroz Branco Tipo 1 5kg', categoria: 'Mercearia', marca: 'Camil', preco: [21.90, 25.49, 22.90] },
+  { id: 2, gtin_ean: '7891000055002', nome: 'Arroz Branco Tipo 1 1kg', categoria: 'Mercearia', marca: 'Tio João', preco: [6.49, 7.29, 6.79] },
+  { id: 3, gtin_ean: '7891000055003', nome: 'Feijão Carioca 1kg', categoria: 'Mercearia', marca: 'Camil', preco: [7.49, 8.59, 7.89] },
+  { id: 4, gtin_ean: '7891000055004', nome: 'Feijão Preto 1kg', categoria: 'Mercearia', marca: 'Camil', preco: [8.19, 9.29, 8.59] },
+  { id: 5, gtin_ean: '7891000055005', nome: 'Macarrão Espaguete 500g', categoria: 'Mercearia', marca: 'Renata', preco: [4.29, 5.19, 4.49] },
+  { id: 6, gtin_ean: '7891000055006', nome: 'Macarrão Parafuso 500g', categoria: 'Mercearia', marca: 'Adria', preco: [4.19, 4.99, 4.39] },
+  { id: 7, gtin_ean: '7891000055007', nome: 'Azeite de Oliva Extra Virgem 500ml', categoria: 'Mercearia', marca: 'Andorinha', preco: [32.90, 38.90, 34.90] },
+  { id: 8, gtin_ean: '7891000055008', nome: 'Açúcar Refinado 1kg', categoria: 'Mercearia', marca: 'União', preco: [4.99, 5.79, 5.29] },
+  { id: 9, gtin_ean: '7891000055009', nome: 'Café Torrado e Moído 500g', categoria: 'Mercearia', marca: 'Pilão', preco: [16.49, 19.90, 17.49] },
+  { id: 10, gtin_ean: '7891000055010', nome: 'Café Solúvel 100g', categoria: 'Mercearia', marca: 'Nescafé', preco: [14.90, 17.90, 15.90] },
+  { id: 11, gtin_ean: '7891000055011', nome: 'Óleo de Soja 900ml', categoria: 'Mercearia', marca: 'Liza', preco: [7.89, 9.49, 8.29] },
+  { id: 12, gtin_ean: '7891000055012', nome: 'Sal Refinado 1kg', categoria: 'Mercearia', marca: 'Cisne', preco: [2.19, 2.69, 2.39] },
+  { id: 13, gtin_ean: '7891000055013', nome: 'Farinha de Trigo 1kg', categoria: 'Mercearia', marca: 'Dona Benta', preco: [5.19, 6.29, 5.49] },
+  { id: 14, gtin_ean: '7891000055014', nome: 'Farinha de Mandioca 500g', categoria: 'Mercearia', marca: 'Jasmine', preco: [6.90, 7.90, 7.29] },
+  { id: 15, gtin_ean: '7891000055015', nome: 'Molho de Tomate Tradicional 340g', categoria: 'Mercearia', marca: 'Pomarola', preco: [3.49, 4.19, 3.79] },
+  { id: 16, gtin_ean: '7891000055016', nome: 'Extrato de Tomate 140g', categoria: 'Mercearia', marca: 'Elefante', preco: [4.49, 5.29, 4.79] },
+  { id: 17, gtin_ean: '7891000055017', nome: 'Tempero Completo 240g', categoria: 'Mercearia', marca: 'Sazon', preco: [2.99, 3.69, 3.19] },
+  { id: 18, gtin_ean: '7891000055018', nome: 'Milho Verde em Lata 170g', categoria: 'Mercearia', marca: 'Quero', preco: [3.89, 4.79, 4.19] },
+  { id: 19, gtin_ean: '7891000055019', nome: 'Ervilha em Lata 170g', categoria: 'Mercearia', marca: 'Quero', preco: [3.79, 4.59, 3.99] },
+  { id: 20, gtin_ean: '7891000055020', nome: 'Atum em Lata 170g', categoria: 'Mercearia', marca: 'Coqueiro', preco: [8.49, 9.99, 8.99] },
+  { id: 21, gtin_ean: '7891000055021', nome: 'Sardinha em Lata 125g', categoria: 'Mercearia', marca: 'Coqueiro', preco: [6.49, 7.49, 6.79] },
+  { id: 22, gtin_ean: '7891000055022', nome: 'Leite Condensado 395g', categoria: 'Mercearia', marca: 'Moça', preco: [6.79, 7.99, 7.19] },
+  { id: 23, gtin_ean: '7891000055023', nome: 'Creme de Leite 200g', categoria: 'Mercearia', marca: 'Nestlé', preco: [3.99, 4.79, 4.29] },
+  { id: 24, gtin_ean: '7891000055024', nome: 'Chocolate em Pó 400g', categoria: 'Mercearia', marca: 'Nescau', preco: [10.49, 12.49, 11.29] },
+  { id: 25, gtin_ean: '7891000055025', nome: 'Achocolatado 800g', categoria: 'Mercearia', marca: 'Toddy', preco: [12.90, 14.90, 13.49] },
+  { id: 26, gtin_ean: '7891000055026', nome: 'Biscoito Recheado Chocolate 140g', categoria: 'Mercearia', marca: 'Oreo', preco: [4.79, 5.79, 4.99] },
+  { id: 27, gtin_ean: '7891000055027', nome: 'Biscoito Cream Cracker 400g', categoria: 'Mercearia', marca: 'Marilan', preco: [6.49, 7.49, 6.79] },
+  { id: 28, gtin_ean: '7891000055028', nome: 'Bolacha Maizena 200g', categoria: 'Mercearia', marca: 'Nestlé', preco: [3.49, 4.19, 3.79] },
+  { id: 29, gtin_ean: '7891000055029', nome: 'Pão de Forma Integral 400g', categoria: 'Mercearia', marca: 'Pullman', preco: [7.29, 8.49, 7.69] },
+  { id: 30, gtin_ean: '7891000055030', nome: 'Aveia em Flocos 250g', categoria: 'Mercearia', marca: 'Quaker', preco: [7.99, 9.49, 8.49] },
+  { id: 31, gtin_ean: '7891000055031', nome: 'Granola Crocante 300g', categoria: 'Mercearia', marca: 'Mondelez', preco: [12.49, 14.90, 13.49] },
+  { id: 32, gtin_ean: '7891000055032', nome: 'Farinha de Pão de Queijo 500g', categoria: 'Mercearia', marca: 'Jussara', preco: [9.49, 10.99, 9.89] },
+  { id: 33, gtin_ean: '7891000055033', nome: 'Vinagre de Álcool 750ml', categoria: 'Mercearia', marca: 'Castelo', preco: [2.79, 3.49, 2.99] },
+  { id: 34, gtin_ean: '7891000055034', nome: 'Shoyu 500ml', categoria: 'Mercearia', marca: 'Sakura', preco: [8.90, 10.49, 9.49] },
+  { id: 35, gtin_ean: '7891000055035', nome: 'Mostarda 200g', categoria: 'Mercearia', marca: 'Heinz', preco: [7.49, 8.90, 7.99] },
+  { id: 36, gtin_ean: '7891000055036', nome: 'Ketchup Tradicional 380g', categoria: 'Mercearia', marca: 'Heinz', preco: [9.90, 11.90, 10.49] },
+  { id: 37, gtin_ean: '7891000055037', nome: 'Maionese Tradicional 500g', categoria: 'Mercearia', marca: 'Hellmann\'s', preco: [9.49, 11.49, 9.99] },
+  { id: 38, gtin_ean: '7891000055038', nome: 'Requeijão Cremoso 200g', categoria: 'Mercearia', marca: 'Nestlé', preco: [6.49, 7.79, 6.99] },
+  { id: 39, gtin_ean: '7891000055039', nome: 'Goiabada em Lata 300g', categoria: 'Mercearia', marca: 'Nova Cidade', preco: [7.49, 8.79, 7.99] },
+  { id: 40, gtin_ean: '7891000055040', nome: 'Mel 500g', categoria: 'Mercearia', marca: 'Natulha', preco: [16.90, 19.90, 17.90] },
+  { id: 41, gtin_ean: '7891000055041', nome: 'Farinha de Rosca 200g', categoria: 'Mercearia', marca: 'Renata', preco: [5.49, 6.49, 5.79] },
+  { id: 42, gtin_ean: '7891000055042', nome: 'Fermento Biológico 100g', categoria: 'Mercearia', marca: 'Fleischmann', preco: [6.90, 8.29, 7.29] },
+  { id: 43, gtin_ean: '7891000055043', nome: 'Fermento em Pó 100g', categoria: 'Mercearia', marca: 'Roya', preco: [4.29, 5.19, 4.59] },
+  { id: 44, gtin_ean: '7891000055044', nome: 'Ovos Brancos Cx 12un', categoria: 'Mercearia', marca: 'Granja Mantiqueira', preco: [13.49, 15.90, 14.29] },
+  { id: 45, gtin_ean: '7891000055045', nome: 'Catchup Pikles 200g', categoria: 'Mercearia', marca: 'Lide', preco: [5.90, 6.90, 6.29] },
+
+  /* ---------- HORTIFRUTI ---------- */
+  { id: 46, gtin_ean: '7891000055046', nome: 'Tomate Italiano kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [6.99, 8.49, 7.49] },
+  { id: 47, gtin_ean: '7891000055047', nome: 'Cebola kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [5.49, 6.79, 5.89] },
+  { id: 48, gtin_ean: '7891000055048', nome: 'Batata Inglesa kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [5.99, 7.49, 6.49] },
+  { id: 49, gtin_ean: '7891000055049', nome: 'Cenoura kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.99, 4.99, 4.39] },
+  { id: 50, gtin_ean: '7891000055050', nome: 'Alface Crespa un', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [2.49, 3.29, 2.79] },
+  { id: 51, gtin_ean: '7891000055051', nome: 'Banana Prata kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [4.99, 6.49, 5.49] },
+  { id: 52, gtin_ean: '7891000055052', nome: 'Maçã Gala kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [8.49, 10.49, 8.99] },
+  { id: 53, gtin_ean: '7891000055053', nome: 'Laranja Pera kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.49, 4.49, 3.79] },
+  { id: 54, gtin_ean: '7891000055054', nome: 'Limão Taiti kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [4.49, 5.79, 4.99] },
+  { id: 55, gtin_ean: '7891000055055', nome: 'Pêra Williams kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [9.49, 11.90, 10.49] },
+  { id: 56, gtin_ean: '7891000055056', nome: 'Melancia Fatia kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.29, 4.29, 3.59] },
+  { id: 57, gtin_ean: '7891000055057', nome: 'Abacaxi Pérola un', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [6.49, 8.49, 6.99] },
+  { id: 58, gtin_ean: '7891000055058', nome: 'Manga Tommy kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [7.49, 9.49, 7.99] },
+  { id: 59, gtin_ean: '7891000055059', nome: 'Uva Red Globe kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [14.90, 18.90, 15.90] },
+  { id: 60, gtin_ean: '7891000055060', nome: 'Morango Bandeja 300g', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [9.90, 12.90, 10.90] },
+  { id: 61, gtin_ean: '7891000055061', nome: 'Abobrinha Italiana kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [4.99, 6.49, 5.49] },
+  { id: 62, gtin_ean: '7891000055062', nome: 'Pepino Japonês kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [4.49, 5.79, 4.99] },
+  { id: 63, gtin_ean: '7891000055063', nome: 'Pimentão Verde kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [5.99, 7.49, 6.49] },
+  { id: 64, gtin_ean: '7891000055064', nome: 'Couve Manteiga maço', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [2.79, 3.49, 2.99] },
+  { id: 65, gtin_ean: '7891000055065', nome: 'Brócolis Bandeja 300g', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [6.49, 7.99, 6.99] },
+  { id: 66, gtin_ean: '7891000055066', nome: 'Batata Doce kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [5.49, 6.99, 5.99] },
+  { id: 67, gtin_ean: '7891000055067', nome: 'Mandioca kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [4.99, 6.29, 5.49] },
+  { id: 68, gtin_ean: '7891000055068', nome: 'Chuchu kg', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.49, 4.49, 3.79] },
+  { id: 69, gtin_ean: '7891000055069', nome: 'Repolho Verde un', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.99, 4.99, 4.29] },
+  { id: 70, gtin_ean: '7891000055070', nome: 'Alho Roxo 100g', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [4.49, 5.79, 4.89] },
+  { id: 71, gtin_ean: '7891000055071', nome: 'Salsa e Cebolinha maço', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [1.99, 2.69, 2.19] },
+  { id: 72, gtin_ean: '7891000055072', nome: 'Pimenta Dedo de Moça 100g', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.49, 4.49, 3.79] },
+  { id: 73, gtin_ean: '7891000055073', nome: 'Coco Seco un', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [6.90, 8.49, 7.49] },
+  { id: 74, gtin_ean: '7891000055074', nome: 'Acelga maço', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [2.79, 3.49, 2.99] },
+  { id: 75, gtin_ean: '7891000055075', nome: 'Salsão maço', categoria: 'Hortifruti', marca: 'Hortifruti', preco: [3.29, 4.19, 3.59] },
+
+  /* ---------- CARNES ---------- */
+  { id: 76, gtin_ean: '7891000055076', nome: 'Patinho Moído kg', categoria: 'Carnes', marca: 'Sadia', preco: [28.90, 34.90, 30.90] },
+  { id: 77, gtin_ean: '7891000055077', nome: 'Picanha Fatiada kg', categoria: 'Carnes', marca: 'Friboi', preco: [54.90, 64.90, 58.90] },
+  { id: 78, gtin_ean: '7891000055078', nome: 'Alcatra kg', categoria: 'Carnes', marca: 'Friboi', preco: [38.90, 45.90, 41.90] },
+  { id: 79, gtin_ean: '7891000055079', nome: 'Coxão Mole kg', categoria: 'Carnes', marca: 'Friboi', preco: [31.90, 37.90, 33.90] },
+  { id: 80, gtin_ean: '7891000055080', nome: 'Frango Inteiro Resfriado kg', categoria: 'Carnes', marca: 'Sadia', preco: [10.49, 12.90, 11.29] },
+  { id: 81, gtin_ean: '7891000055081', nome: 'Coxinha da Asa kg', categoria: 'Carnes', marca: 'Sadia', preco: [14.90, 17.90, 15.90] },
+  { id: 82, gtin_ean: '7891000055082', nome: 'Peito de Frango kg', categoria: 'Carnes', marca: 'Perdigão', preco: [18.90, 22.90, 19.90] },
+  { id: 83, gtin_ean: '7891000055083', nome: 'Sobrecoxa kg', categoria: 'Carnes', marca: 'Perdigão', preco: [12.49, 14.90, 13.29] },
+  { id: 84, gtin_ean: '7891000055084', nome: 'Linguiça Toscana 500g', categoria: 'Carnes', marca: 'Sadia', preco: [11.49, 13.90, 12.29] },
+  { id: 85, gtin_ean: '7891000055085', nome: 'Bisteca Suína kg', categoria: 'Carnes', marca: 'Perdigão', preco: [18.49, 21.90, 19.49] },
+  { id: 86, gtin_ean: '7891000055086', nome: 'Carne Moída Acém kg', categoria: 'Carnes', marca: 'Friboi', preco: [25.90, 30.90, 27.90] },
+  { id: 87, gtin_ean: '7891000055087', nome: 'Costela Suína kg', categoria: 'Carnes', marca: 'Sadia', preco: [22.90, 26.90, 23.90] },
+  { id: 88, gtin_ean: '7891000055088', nome: 'Hambúrguer Bovino 480g', categoria: 'Carnes', marca: 'Sadia', preco: [14.49, 17.49, 15.29] },
+  { id: 89, gtin_ean: '7891000055089', nome: 'Nuggets de Frango 450g', categoria: 'Carnes', marca: 'Sadia', preco: [15.49, 18.49, 16.49] },
+  { id: 90, gtin_ean: '7891000055090', nome: 'Apresuntado Fatiado 150g', categoria: 'Carnes', marca: 'Sadia', preco: [6.99, 8.49, 7.49] },
+  { id: 91, gtin_ean: '7891000055091', nome: 'Presunto Fatiado 150g', categoria: 'Carnes', marca: 'Perdigão', preco: [7.49, 8.99, 7.99] },
+  { id: 92, gtin_ean: '7891000055092', nome: 'Mussarela Fatiada 150g', categoria: 'Carnes', marca: 'Presidente', preco: [8.49, 10.49, 8.99] },
+  { id: 93, gtin_ean: '7891000055093', nome: 'Mortadela Fatiada 200g', categoria: 'Carnes', marca: 'Perdigão', preco: [6.49, 7.79, 6.89] },
+  { id: 94, gtin_ean: '7891000055094', nome: 'Peito de Peru Fatiado 150g', categoria: 'Carnes', marca: 'Sadia', preco: [12.49, 14.90, 13.49] },
+  { id: 95, gtin_ean: '7891000055095', nome: 'Salmão Posta kg', categoria: 'Carnes', marca: 'Pescados', preco: [69.90, 84.90, 74.90] },
+  { id: 96, gtin_ean: '7891000055096', nome: 'Tilápia Filé kg', categoria: 'Carnes', marca: 'Pescados', preco: [39.90, 49.90, 43.90] },
+  { id: 97, gtin_ean: '7891000055097', nome: 'Camarão 7 Barbas 400g', categoria: 'Carnes', marca: 'Pescados', preco: [34.90, 42.90, 37.90] },
+  { id: 98, gtin_ean: '7891000055098', nome: 'Bacalhau Porto 400g', categoria: 'Carnes', marca: 'Lofin', preco: [55.90, 66.90, 59.90] },
+  { id: 99, gtin_ean: '7891000055099', nome: 'Lagarto Fatiado 300g', categoria: 'Carnes', marca: 'Friboi', preco: [26.90, 31.90, 28.90] },
+  { id: 100, gtin_ean: '7891000055100', nome: 'Maminha kg', categoria: 'Carnes', marca: 'Friboi', preco: [42.90, 49.90, 45.90] },
+  { id: 101, gtin_ean: '7891000055101', nome: 'Fraldinha kg', categoria: 'Carnes', marca: 'Friboi', preco: [36.90, 42.90, 38.90] },
+  { id: 102, gtin_ean: '7891000055102', nome: 'Coração de Frango 500g', categoria: 'Carnes', marca: 'Sadia', preco: [11.49, 13.90, 12.29] },
+  { id: 103, gtin_ean: '7891000055103', nome: 'Linguiça Calabresa 500g', categoria: 'Carnes', marca: 'Aurora', preco: [12.49, 14.49, 13.29] },
+  { id: 104, gtin_ean: '7891000055104', nome: 'Bacon Fatiado 200g', categoria: 'Carnes', marca: 'Sadia', preco: [11.49, 13.90, 12.29] },
+  { id: 105, gtin_ean: '7891000055105', nome: 'Carne Seca 500g', categoria: 'Carnes', marca: 'Friboi', preco: [32.90, 38.90, 34.90] },
+
+  /* ---------- BEBIDAS ---------- */
+  { id: 106, gtin_ean: '7891000055106', nome: 'Leite Integral 1L', categoria: 'Bebidas', marca: 'Piracanjuba', preco: [5.49, 6.49, 5.79] },
+  { id: 107, gtin_ean: '7891000055107', nome: 'Leite Desnatado 1L', categoria: 'Bebidas', marca: 'Piracanjuba', preco: [5.49, 6.49, 5.79] },
+  { id: 108, gtin_ean: '7891000055108', nome: 'Coca-Cola 2L', categoria: 'Bebidas', marca: 'Coca-Cola', preco: [9.49, 10.99, 9.79] },
+  { id: 109, gtin_ean: '7891000055109', nome: 'Guaraná Antarctica 2L', categoria: 'Bebidas', marca: 'Antarctica', preco: [8.49, 9.99, 8.79] },
+  { id: 110, gtin_ean: '7891000055110', nome: 'Fanta Laranja 2L', categoria: 'Bebidas', marca: 'Coca-Cola', preco: [8.49, 9.99, 8.79] },
+  { id: 111, gtin_ean: '7891000055111', nome: 'Suco de Laranja 1L', categoria: 'Bebidas', marca: 'Del Valle', preco: [8.99, 10.49, 9.49] },
+  { id: 112, gtin_ean: '7891000055112', nome: 'Suco de Uva Integral 1L', categoria: 'Bebidas', marca: 'Aurora', preco: [11.49, 13.49, 11.99] },
+  { id: 113, gtin_ean: '7891000055113', nome: 'Água Mineral 500ml', categoria: 'Bebidas', marca: 'Crystal', preco: [1.99, 2.49, 2.19] },
+  { id: 114, gtin_ean: '7891000055114', nome: 'Água com Gás 500ml', categoria: 'Bebidas', marca: 'Crystal', preco: [2.49, 3.19, 2.79] },
+  { id: 115, gtin_ean: '7891000055115', nome: 'Cerveja Lata 350ml', categoria: 'Bebidas', marca: 'Skol', preco: [3.49, 3.99, 3.69] },
+  { id: 116, gtin_ean: '7891000055116', nome: 'Cerveja Pilsen 600ml', categoria: 'Bebidas', marca: 'Heineken', preco: [7.49, 8.99, 7.99] },
+  { id: 117, gtin_ean: '7891000055117', nome: 'Refrigerante Lata 350ml', categoria: 'Bebidas', marca: 'Coca-Cola', preco: [3.49, 4.19, 3.79] },
+  { id: 118, gtin_ean: '7891000055118', nome: 'Vinho Tinto Seco 750ml', categoria: 'Bebidas', marca: 'Casillero del Diablo', preco: [49.90, 59.90, 54.90] },
+  { id: 119, gtin_ean: '7891000055119', nome: 'Vinho Tinto Suave 750ml', categoria: 'Bebidas', marca: 'Periquita', preco: [29.90, 36.90, 32.90] },
+  { id: 120, gtin_ean: '7891000055120', nome: 'Chá Mate Leão 1L', categoria: 'Bebidas', marca: 'Leão', preco: [6.49, 7.79, 6.99] },
+  { id: 121, gtin_ean: '7891000055121', nome: 'Água de Coco 1L', categoria: 'Bebidas', marca: 'DuCoco', preco: [8.49, 9.99, 8.99] },
+  { id: 122, gtin_ean: '7891000055122', nome: 'Energético 250ml', categoria: 'Bebidas', marca: 'Red Bull', preco: [12.49, 14.49, 13.29] },
+  { id: 123, gtin_ean: '7891000055123', nome: 'Iogurte Natural 170g', categoria: 'Bebidas', marca: 'Nestlé', preco: [3.49, 4.29, 3.79] },
+  { id: 124, gtin_ean: '7891000055124', nome: 'Leite Fermentado 90g', categoria: 'Bebidas', marca: 'Yakult', preco: [3.29, 3.99, 3.49] },
+  { id: 125, gtin_ean: '7891000055125', nome: 'Bebida de Soja 1L', categoria: 'Bebidas', marca: 'Ades', preco: [6.99, 8.49, 7.49] },
+  { id: 126, gtin_ean: '7891000055126', nome: 'Cerveja sem Álcool 350ml', categoria: 'Bebidas', marca: 'Skol', preco: [3.29, 3.79, 3.49] },
+  { id: 127, gtin_ean: '7891000055127', nome: 'Whisky 1L', categoria: 'Bebidas', marca: 'Passport', preco: [54.90, 64.90, 59.90] },
+  { id: 128, gtin_ean: '7891000055128', nome: 'Vodka 998ml', categoria: 'Bebidas', marca: 'Smirnoff', preco: [42.90, 49.90, 45.90] },
+  { id: 129, gtin_ean: '7891000055129', nome: 'Cachaça 965ml', categoria: 'Bebidas', marca: 'Pirassununga 51', preco: [19.90, 24.90, 21.90] },
+  { id: 130, gtin_ean: '7891000055130', nome: 'Campari 900ml', categoria: 'Bebidas', marca: 'Campari', preco: [46.90, 54.90, 49.90] },
+
+  /* ---------- LIMPEZA ---------- */
+  { id: 131, gtin_ean: '7891000055131', nome: 'Detergente Líquido 500ml', categoria: 'Limpeza', marca: 'Ypê', preco: [2.49, 3.19, 2.79] },
+  { id: 132, gtin_ean: '7891000055132', nome: 'Sabão em Pó 1kg', categoria: 'Limpeza', marca: 'Omo', preco: [14.49, 17.49, 15.49] },
+  { id: 133, gtin_ean: '7891000055133', nome: 'Água Sanitária 1L', categoria: 'Limpeza', marca: 'Cândida', preco: [3.49, 4.49, 3.79] },
+  { id: 134, gtin_ean: '7891000055134', nome: 'Desinfetante 2L', categoria: 'Limpeza', marca: 'Pinho Sol', preco: [8.99, 10.99, 9.49] },
+  { id: 135, gtin_ean: '7891000055135', nome: 'Multiuso 500ml', categoria: 'Limpeza', marca: 'Limpol', preco: [4.49, 5.49, 4.79] },
+  { id: 136, gtin_ean: '7891000055136', nome: 'Lustra Móveis 200ml', categoria: 'Limpeza', marca: 'Poliflor', preco: [6.49, 7.79, 6.99] },
+  { id: 137, gtin_ean: '7891000055137', nome: 'Esponja Dupla Face un', categoria: 'Limpeza', marca: 'Assolan', preco: [2.19, 2.79, 2.39] },
+  { id: 138, gtin_ean: '7891000055138', nome: 'Papel Toalha 2un', categoria: 'Limpeza', marca: 'Mili', preco: [9.49, 11.49, 9.99] },
+  { id: 139, gtin_ean: '7891000055139', nome: 'Guardanapo 50un', categoria: 'Limpeza', marca: 'Melhor', preco: [2.79, 3.49, 2.99] },
+  { id: 140, gtin_ean: '7891000055140', nome: 'Saco de Lixo 30L 20un', categoria: 'Limpeza', marca: 'Kami', preco: [11.49, 13.49, 11.99] },
+  { id: 141, gtin_ean: '7891000055141', nome: 'Limpador de Piso 2L', categoria: 'Limpeza', marca: 'Veja', preco: [12.49, 14.49, 13.29] },
+  { id: 142, gtin_ean: '7891000055142', nome: 'Amaciante 2L', categoria: 'Limpeza', marca: 'Comfort', preco: [16.49, 19.90, 17.49] },
+  { id: 143, gtin_ean: '7891000055143', nome: 'Esponja de Aço 4un', categoria: 'Limpeza', marca: 'Bombril', preco: [2.99, 3.59, 3.19] },
+  { id: 144, gtin_ean: '7891000055144', nome: 'Alvejante 1L', categoria: 'Limpeza', marca: 'Vanish', preco: [13.49, 15.90, 14.29] },
+  { id: 145, gtin_ean: '7891000055145', nome: 'Tira-Manchas 500ml', categoria: 'Limpeza', marca: 'Vanish', preco: [18.90, 21.90, 19.90] },
+
+  /* ---------- HIGIENE ---------- */
+  { id: 146, gtin_ean: '7891000055146', nome: 'Sabonete 90g', categoria: 'Higiene', marca: 'Dove', preco: [3.29, 3.99, 3.49] },
+  { id: 147, gtin_ean: '7891000055147', nome: 'Pasta de Dente 90g', categoria: 'Higiene', marca: 'Colgate', preco: [5.49, 6.49, 5.79] },
+  { id: 148, gtin_ean: '7891000055148', nome: 'Shampoo 400ml', categoria: 'Higiene', marca: 'Seda', preco: [14.49, 17.49, 15.49] },
+  { id: 149, gtin_ean: '7891000055149', nome: 'Condicionador 400ml', categoria: 'Higiene', marca: 'Seda', preco: [14.49, 17.49, 15.49] },
+  { id: 150, gtin_ean: '7891000055150', nome: 'Papel Higiênico 12 rolos', categoria: 'Higiene', marca: 'Mili', preco: [15.49, 18.49, 16.49] }
+];
+
+/* ==================================================================
+   ESTADO DA APLICAÇÃO
+   ================================================================== */
+const estado = {
+  lista: new Map(),          // id -> { produto, qtd }
+  sugestoesAbertas: false,
+  checklistAtivo: false
+};
+
+const CHAVES_LOJA = ['atacadao', 'pao_azucar', 'carrefour'];
+const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+/* ==================================================================
+   BUSCA COM AUTODCOMPLETAR
+   ================================================================== */
+const campoBusca = document.getElementById('campoBusca');
+const sugestoes = document.getElementById('sugestoes');
+const selectQtd = document.getElementById('selectQtd');
+const btnAdicionar = document.getElementById('btnAdicionar');
+
+function buscarProdutos(texto) {
+  const t = texto.trim().toLowerCase();
+  if (!t) return [];
+  return BASE_DADOS.filter(p =>
+    p.nome.toLowerCase().includes(t) ||
+    p.categoria.toLowerCase().includes(t) ||
+    p.marca.toLowerCase().includes(t)
+  );
+}
+
+function renderSugestoes() {
+  const itens = buscarProdutos(campoBusca.value).slice(0, 8);
+  if (!itens.length) {
+    sugestoes.classList.add('hidden');
+    return;
+  }
+  sugestoes.innerHTML = '';
+  itens.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'autocomplete-item px-4 py-3 cursor-pointer hover:bg-emerald-50 flex items-center justify-between gap-3 ' + (i === 0 ? 'active' : '');
+    div.innerHTML = `<div>
+        <p class="font-medium text-slate-800">${p.nome}</p>
+        <p class="text-xs text-slate-400">${p.categoria} • ${p.marca}</p>
+      </div>
+      <span class="text-emerald-600 font-semibold text-sm whitespace-nowrap">${fmtBRL(Math.min(...p.preco))}</span>`;
+    div.addEventListener('click', () => selecionarProduto(p));
+    sugestoes.appendChild(div);
+  });
+  sugestoes.classList.remove('hidden');
+}
+
+function selecionarProduto(p) {
+  campoBusca.value = p.nome;
+  sugestoes.classList.add('hidden');
+  estado.produtoSelecionado = p;
+  campoBusca.dataset.produtoId = p.id;
+}
+
+campoBusca.addEventListener('input', () => {
+  delete estado.produtoSelecionado;
+  campoBusca.dataset.produtoId = '';
+  renderSugestoes();
+});
+
+campoBusca.addEventListener('focus', () => renderSugestoes());
+campoBusca.addEventListener('blur', () => setTimeout(() => sugestoes.classList.add('hidden'), 150));
+
+btnAdicionar.addEventListener('click', () => {
+  const id = parseInt(campoBusca.dataset.produtoId || '');
+  if (!id) {
+    // se digitou texto exato, aceita primeiro match
+    const [match] = buscarProdutos(campoBusca.value);
+    if (!match) { alert('Produto não encontrado. Selecione uma sugestão.'); return; }
+    selecionarProduto(match);
+  }
+  const p = BASE_DADOS.find(x => x.id === id) || BASE_DADOS.find(x => x.nome === campoBusca.value);
+  if (!p) { alert('Produto não encontrado.'); return; }
+  const qtd = parseInt(selectQtd.value);
+  const atual = estado.lista.get(p.id);
+  if (atual) atual.qtd += qtd;
+  else estado.lista.set(p.id, { produto: p, qtd });
+  campoBusca.value = '';
+  campoBusca.dataset.produtoId = '';
+  delete estado.produtoSelecionado;
+  renderLista();
+});
+
+/* ==================================================================
+   TABELA DA LISTA
+   ================================================================== */
+const listaVazia = document.getElementById('listaVazia');
+const tabelaLista = document.getElementById('tabelaLista');
+const corpoLista = document.getElementById('corpoLista');
+const contagemItens = document.getElementById('contagemItens');
+
+function renderLista() {
+  const totalItens = [...estado.lista.values()].reduce((s, i) => s + i.qtd, 0);
+  if (!estado.lista.size) {
+    listaVazia.classList.remove('hidden');
+    tabelaLista.classList.add('hidden');
+    return;
+  }
+  listaVazia.classList.add('hidden');
+  tabelaLista.classList.remove('hidden');
+  contagemItens.textContent = totalItens + ' item(ns)';
+
+  corpoLista.innerHTML = '';
+  estado.lista.forEach(({ produto, qtd }, id) => {
+    const tr = document.createElement('tr');
+    const menor = Math.min(...produto.preco);
+    const trHTML = `
+      <td class="px-4 py-3">
+        <p class="font-medium text-slate-800">${produto.nome}</p>
+        <p class="text-xs text-slate-400">${produto.categoria} • ${produto.marca}</p>
+      </td>
+      <td class="text-center px-4 py-3">
+        <div class="inline-flex items-center gap-1 border border-slate-200 rounded-lg px-1 py-0.5">
+          <button class="btnQtdMenos w-7 h-7 rounded-md hover:bg-slate-100 font-bold text-slate-600">−</button>
+          <span class="w-8 text-center font-semibold">${qtd}</span>
+          <button class="btnQtdMais w-7 h-7 rounded-md hover:bg-slate-100 font-bold text-slate-600">+</button>
+        </div>
+      </td>
+      <td class="text-center px-4 py-3 hidden sm:table-cell font-semibold text-emerald-600">${fmtBRL(menor)}</td>
+      <td class="text-center px-4 py-3">
+        <button class="btnRemover text-red-400 hover:text-red-600 text-lg" title="Remover">✕</button>
+      </td>`;
+    tr.innerHTML = trHTML;
+    tr.querySelector('.btnQtdMenos').addEventListener('click', () => {
+      const a = estado.lista.get(id);
+      if (a.qtd > 1) a.qtd--; else estado.lista.delete(id);
+      renderLista();
+    });
+    tr.querySelector('.btnQtdMais').addEventListener('click', () => {
+      estado.lista.get(id).qtd++;
+      renderLista();
+    });
+    tr.querySelector('.btnRemover').addEventListener('click', () => {
+      estado.lista.delete(id);
+      renderLista();
+    });
+    corpoLista.appendChild(tr);
+  });
+}
+
+document.getElementById('btnLimparLista').addEventListener('click', () => {
+  if (!confirm('Limpar todos os itens da lista?')) return;
+  estado.lista.clear();
+  renderLista();
+});
+
+/* ==================================================================
+   MOTOR DE CÁLCULO
+   ================================================================== */
+const btnCalcular = document.getElementById('btnCalcular');
+const secaoResultados = document.getElementById('resultados');
+const secaoChecklist = document.getElementById('modoChecklist');
+
+function totalPorLoja() {
+  const totais = { atacadao: 0, pao_azucar: 0, carrefour: 0 };
+  estado.lista.forEach(({ produto, qtd }) => {
+    CHAVES_LOJA.forEach((k, i) => { totais[k] += produto.preco[i] * qtd; });
+  });
+  return totais;
+}
+
+function melhorLojaUnica() {
+  const totais = totalPorLoja();
+  const melhor = Object.keys(totais).sort((a, b) => totais[a] - totais[b])[0];
+  const pior = Object.keys(totais).sort((a, b) => totais[b] - totais[a])[0];
+  return {
+    loja: melhor,
+    total: totais[melhor],
+    piorLoja: pior,
+    economia: totais[pior] - totais[melhor]
+  };
+}
+
+function divisaoMultiLoja() {
+  const distribuicao = { atacadao: [], pao_azucar: [], carrefour: [] };
+  let total = 0;
+  estado.lista.forEach(({ produto, qtd }) => {
+    const idxMenor = produto.preco.indexOf(Math.min(...produto.preco));
+    const loja = CHAVES_LOJA[idxMenor];
+    const custo = produto.preco[idxMenor] * qtd;
+    distribuicao[loja].push({ nome: produto.nome, qtd, custo });
+    total += custo;
+  });
+  // limita a 2 lojas: mantém as duas com maior participação no valor
+  const lojasOrdenadas = Object.keys(distribuicao)
+    .filter(k => distribuicao[k].length)
+    .sort((a, b) => distribuicao[b].reduce((s, i) => s + i.custo, 0) - distribuicao[a].reduce((s, i) => s + i.custo, 0));
+  return { distribuicao, lojasOrdenadas, total };
+}
+
+function renderResultados() {
+  const { loja, total, piorLoja, economia } = melhorLojaUnica();
+  const todosTotais = totalPorLoja();
+
+  // OPÇÃO 1
+  const r1 = document.getElementById('resultadoLojaUnica');
+  r1.innerHTML = CHAVES_LOJA.map(k => {
+    const melhor = k === loja;
+    return `<div class="${melhor ? 'bg-emerald-50 ring-2 ring-emerald-500' : 'bg-slate-50 ring-1 ring-slate-200'} rounded-2xl p-5 flex flex-col gap-1">
+      <div class="flex items-center gap-2">
+        <span>${LOJAS[k].icone}</span>
+        <p class="font-semibold text-slate-800 text-sm">${LOJAS[k].nome}</p>
+        ${melhor ? '<span class="ml-auto bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">MELHOR</span>' : ''}
+      </div>
+      <p class="text-2xl font-extrabold ${melhor ? 'text-emerald-600' : 'text-slate-700'}">${fmtBRL(todosTotais[k])}</p>
+    </div>`;
+  }).join('');
+
+  // OPÇÃO 2
+  const { distribuicao, lojasOrdenadas, total: totalOtim } = divisaoMultiLoja();
+  document.getElementById('valorTotalOtimizado').textContent = fmtBRL(totalOtim);
+  const economiaMulti = todosTotais[piorLoja] - totalOtim;
+  document.getElementById('economiaMulti').textContent = fmtBRL(economiaMulti);
+
+  const divLojas = document.getElementById('divisaoLojas');
+  divLojas.innerHTML = '';
+  CHAVES_LOJA.forEach(k => {
+    const itens = distribuicao[k];
+    if (!itens.length) return;
+    const soma = itens.reduce((s, i) => s + i.custo, 0);
+    const card = document.createElement('div');
+    card.className = 'bg-slate-50 rounded-2xl p-4 ring-1 ring-slate-200';
+    card.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-bold text-slate-800">${LOJAS[k].icone} ${LOJAS[k].nome}</p>
+        <span class="font-extrabold text-violet-600">${fmtBRL(soma)}</span>
+      </div>
+      <ul class="text-sm text-slate-600 space-y-1">
+        ${itens.map(i => `<li class="flex justify-between gap-2"><span>${i.qtd}× ${i.nome}</span><span class="whitespace-nowrap font-medium">${fmtBRL(i.custo)}</span></li>`).join('')}
+      </ul>`;
+    divLojas.appendChild(card);
+  });
+
+  // Comparativo geral
+  const comp = document.getElementById('comparativoGeral');
+  const melhorComp = Math.min(...Object.values(todosTotais));
+  comp.innerHTML = CHAVES_LOJA.map(k => {
+    const v = todosTotais[k];
+    const ehMelhor = v === melhorComp;
+    return `<div class="bg-slate-50 rounded-2xl p-5 ring-1 ring-slate-200 ${ehMelhor ? 'ring-2 ring-amber-400' : ''}">
+      <p class="text-sm font-semibold text-slate-700">${LOJAS[k].icone} ${LOJAS[k].nome}</p>
+      <p class="text-2xl font-extrabold text-slate-900 mt-1">${fmtBRL(v)}</p>
+      ${ehMelhor ? '<span class="text-xs font-bold text-amber-600">⭐ MENOR PREÇO</span>' : `<span class="text-xs text-red-500 font-medium">+${fmtBRL(v - melhorComp)} vs. menor</span>`}
+    </div>`;
+  }).join('');
+
+  // CTA checklist
+  const btnChecklist = document.getElementById('btnAbrirChecklist');
+  if (btnChecklist) btnChecklist.textContent = '✅ Abrir Modo Checklist de Compras';
+
+  secaoResultados.classList.remove('hidden');
+  secaoResultados.scrollIntoView({ behavior: 'smooth' });
+}
+
+btnCalcular.addEventListener('click', () => {
+  if (!estado.lista.size) { alert('Adicione ao menos um produto à lista.'); return; }
+  renderResultados();
+});
+
+document.getElementById('btnNovaBusca').addEventListener('click', () => {
+  secaoResultados.classList.add('hidden');
+  secaoChecklist.classList.add('hidden');
+  document.getElementById('criador').scrollIntoView({ behavior: 'smooth' });
+});
+
+/* ==================================================================
+   MODO CHECKLIST
+   ================================================================== */
+function renderChecklist() {
+  if (estado.checklistAtivo) {
+    secaoChecklist.classList.remove('hidden');
+    const corpo = document.getElementById('checklistCorpo');
+    const grupos = {};
+    estado.lista.forEach(({ produto, qtd }) => {
+      if (!grupos[produto.categoria]) grupos[produto.categoria] = [];
+      grupos[produto.categoria].push({ produto, qtd });
+    });
+    corpo.innerHTML = '';
+    let totalMarcados = 0;
+    let totalItens = 0;
+    Object.entries(grupos).forEach(([categoria, itens]) => {
+      const bloco = document.createElement('div');
+      bloco.className = 'bg-slate-50 rounded-xl p-4 ring-1 ring-slate-200';
+      bloco.innerHTML = `<h4 class="font-bold text-slate-700 mb-2 text-sm uppercase tracking-wide">${categoria}</h4>`;
+      const listaUl = document.createElement('ul');
+      listaUl.className = 'space-y-2';
+      itens.forEach(({ produto, qtd }) => {
+        totalItens += qtd;
+        const li = document.createElement('li');
+        li.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-white';
+        li.innerHTML = `
+          <input type="checkbox" class="checkItem w-5 h-5 accent-emerald-600 flex-shrink-0" data-id="${produto.id}">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-800">${produto.nome} <span class="text-slate-400">× ${qtd}</span></p>
+          </div>`;
+        const cb = li.querySelector('.checkItem');
+        cb.addEventListener('change', () => atualizarProgresso());
+        listaUl.appendChild(li);
+      });
+      bloco.appendChild(listaUl);
+      corpo.appendChild(bloco);
+    });
+    estado.totalItensChecklist = totalItens;
+    atualizarProgresso();
+  } else {
+    secaoChecklist.classList.add('hidden');
+  }
+}
+
+function atualizarProgresso() {
+  const checks = document.querySelectorAll('.checkItem');
+  const marcados = [...checks].filter(c => c.checked).length;
+  const total = estado.totalItensChecklist || checks.length;
+  document.getElementById('checklistProgresso').textContent = `✅ ${marcados} de ${total} itens marcados`;
+}
+
+const btnChecklist = document.createElement('button');
+btnChecklist.id = 'btnAbrirChecklist';
+btnChecklist.className = 'w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl transition';
+btnChecklist.textContent = '✅ Abrir Modo Checklist de Compras';
+btnChecklist.addEventListener('click', () => {
+  if (!estado.lista.size) { alert('Adicione itens à lista primeiro.'); return; }
+  estado.checklistAtivo = true;
+  renderChecklist();
+  secaoChecklist.scrollIntoView({ behavior: 'smooth' });
+});
+document.getElementById('comparativoGeral').closest('.bg-white').appendChild(btnChecklist);
+
+document.getElementById('btnSairChecklist').addEventListener('click', () => {
+  estado.checklistAtivo = false;
+  secaoChecklist.classList.add('hidden');
+  secaoResultados.scrollIntoView({ behavior: 'smooth' });
+});
+
+/* ==================================================================
+   INICIALIZAÇÃO
+   ================================================================== */
+renderLista();
+</script>
+</body>
+</html>
