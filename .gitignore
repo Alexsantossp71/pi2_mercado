@@ -1,0 +1,19 @@
+# =========================================
+#  pi2_mercado — .gitignore
+#  Projeto em arquivo único (index.html)
+#  Nada de build/instalação — regras mínimas
+# =========================================
+
+# IDE / editores
+.idea/
+.vscode/
+*.swp
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Backup / rascunhos
+*~
+*.bak
+*.tmp
