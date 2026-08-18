@@ -10,54 +10,55 @@
    CSS CUSTOM PROPERTIES (Design Tokens)
    ================================================================ */
 :root {
-  /* --- Cores Primárias --- */
-  --color-primary-50:  #ecfdf5;
-  --color-primary-100: #d1fae5;
-  --color-primary-200: #a7f3d0;
-  --color-primary-300: #6ee7b7;
-  --color-primary-400: #34d399;
-  --color-primary-500: #10b981;
-  --color-primary-600: #059669;
-  --color-primary-700: #047857;
-  --color-primary-800: #065f46;
-  --color-primary-900: #064e3b;
+  /* --- Paleta Adobe Color ---
+     #F2EDD5 (Creme/Bege Claro - Superfície/Background)
+     #E7390D (Vermelho Alaranjado - Destaques/Alertas/Errors)
+     #F26716 (Laranja Vibrante - Acentos/CTAs)
+     #084A24 (Verde Escuro - Cor Primária/Brand)
+     #04261E (Verde Floresta Muito Escuro - Fundo Escuro/Bordas/Texto Forte)
+  --- */
 
-  /* --- Cores de Acento (Violeta para multi-loja) --- */
-  --color-accent-50:  #f5f3ff;
-  --color-accent-100: #ede9fe;
-  --color-accent-200: #ddd6fe;
-  --color-accent-400: #a78bfa;
-  --color-accent-500: #8b5cf6;
-  --color-accent-600: #7c3aed;
-  --color-accent-700: #6d28d9;
+  /* Cores Primárias (Verde #084A24) */
+  --color-primary-50:  #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-500: #084a24;
+  --color-primary-600: #063c1d;
+  --color-primary-700: #04261e;
 
-  /* --- Cores de Alerta (Âmbar para CTA) --- */
-  --color-warning-400: #fbbf24;
-  --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
+  /* Cores de Acento (Laranja #F26716) */
+  --color-accent-400: #ff8534;
+  --color-accent-500: #f26716;
+  --color-accent-600: #d95305;
+  --color-accent-700: #b34100;
 
-  /* --- Cores de Erro --- */
-  --color-error-400: #f87171;
-  --color-error-500: #ef4444;
-  --color-error-600: #dc2626;
+  /* Cores de Alerta / CTA Secundário (Vermelho Alaranjado #E7390D) */
+  --color-warning-400: #ff5429;
+  --color-warning-500: #e7390d;
+  --color-warning-600: #c42c05;
 
-  /* --- Cores de Loja --- */
-  --color-loja-carrefour: #2563eb;
-  --color-loja-pao-de-acucar: #e11d48;
-  --color-loja-atacadao: #0f766e;
+  /* Cores de Erro */
+  --color-error-500: #e7390d;
+  --color-error-600: #c42c05;
 
-  /* --- Superfícies (Light Mode) --- */
-  --color-bg:           #f8fafc;
+  /* Cores por Loja */
+  --color-loja-carrefour: #1d4ed8;
+  --color-loja-pao-de-acucar: #e7390d;
+  --color-loja-atacadao: #084a24;
+
+  /* --- Superfícies e Bordas Nítidas (Light Mode) --- */
+  --color-bg:           #f2edd5;  /* Creme da Paleta */
   --color-surface:      #ffffff;
-  --color-surface-alt:  #f1f5f9;
-  --color-border:       #e2e8f0;
-  --color-border-light: #f1f5f9;
+  --color-surface-alt:  #e9e3c8;
+  --color-border:       #04261e;  /* Bordas escuras e nítidas com tom da paleta */
+  --color-border-light: #084a24;
+  --border-width:       2px;      /* Bordas bem definidas e visibles */
 
   /* --- Texto (Light Mode) --- */
-  --color-text-primary:   #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-tertiary:  #94a3b8;
-  --color-text-inverse:   #ffffff;
+  --color-text-primary:   #04261e;  /* Verde floresta escuro para contraste máximo */
+  --color-text-secondary: #084a24;
+  --color-text-tertiary:  #2d5045;
+  --color-text-inverse:   #f2edd5;
 
   /* --- Tipografia --- */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -76,8 +77,8 @@
   --font-weight-bold:      700;
   --font-weight-extrabold: 800;
 
-  --line-height-tight:  1.25;
-  --line-height-normal: 1.5;
+  --line-height-tight:   1.25;
+  --line-height-normal:  1.5;
   --line-height-relaxed: 1.75;
 
   /* --- Espaçamento (8px Grid) --- */
@@ -100,11 +101,11 @@
   --radius-2xl:  1.25rem;   /* 20px */
   --radius-full: 9999px;
 
-  /* --- Sombras --- */
-  --shadow-sm:  0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg:  0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  /* --- Sombras Nítidas --- */
+  --shadow-sm:  0 2px 4px rgba(4, 38, 30, 0.08);
+  --shadow-md:  0 4px 8px rgba(4, 38, 30, 0.12);
+  --shadow-lg:  0 8px 16px rgba(4, 38, 30, 0.16);
+  --shadow-xl:  0 12px 24px rgba(4, 38, 30, 0.20);
 
   /* --- Transições --- */
   --transition-fast:   150ms ease;
@@ -122,45 +123,50 @@
 }
 
 /* ================================================================
-   DARK MODE
-   Ativado automaticamente (prefers-color-scheme) ou via classe .dark
+   DARK MODE (Baseado no #04261E da paleta para alto contraste)
    ================================================================ */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --color-bg:           #0f172a;
-    --color-surface:      #1e293b;
-    --color-surface-alt:  #334155;
-    --color-border:       #334155;
-    --color-border-light: #1e293b;
+    --color-bg:           #021813;  /* Fundo ultradark derivado do #04261E */
+    --color-surface:      #04261e;  /* Superfície #04261E da paleta */
+    --color-surface-alt:  #084a24;  /* Superfície alternativa #084A24 */
+    --color-border:       #f2edd5;  /* Bordas creme bem visíveis no escuro */
+    --color-border-light: #f26716;
 
-    --color-text-primary:   #f1f5f9;
-    --color-text-secondary: #94a3b8;
-    --color-text-tertiary:  #64748b;
-    --color-text-inverse:   #0f172a;
+    --color-text-primary:   #f2edd5;  /* Creme para texto principal no modo escuro */
+    --color-text-secondary: #e2d9b5;
+    --color-text-tertiary:  #a8a07c;
+    --color-text-inverse:   #04261e;
 
-    --shadow-sm:  0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-    --shadow-lg:  0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-    --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    --color-primary-500: #34d399;
+    --color-primary-600: #10b981;
+
+    --shadow-sm:  0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md:  0 4px 8px rgba(0, 0, 0, 0.5);
+    --shadow-lg:  0 8px 16px rgba(0, 0, 0, 0.6);
+    --shadow-xl:  0 12px 24px rgba(0, 0, 0, 0.7);
   }
 }
 
 .dark {
-  --color-bg:           #0f172a;
-  --color-surface:      #1e293b;
-  --color-surface-alt:  #334155;
-  --color-border:       #334155;
-  --color-border-light: #1e293b;
+  --color-bg:           #021813;
+  --color-surface:      #04261e;
+  --color-surface-alt:  #084a24;
+  --color-border:       #f2edd5;
+  --color-border-light: #f26716;
 
-  --color-text-primary:   #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-tertiary:  #64748b;
-  --color-text-inverse:   #0f172a;
+  --color-text-primary:   #f2edd5;
+  --color-text-secondary: #e2d9b5;
+  --color-text-tertiary:  #a8a07c;
+  --color-text-inverse:   #04261e;
 
-  --shadow-sm:  0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg:  0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --color-primary-500: #34d399;
+  --color-primary-600: #10b981;
+
+  --shadow-sm:  0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md:  0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg:  0 8px 16px rgba(0, 0, 0, 0.6);
+  --shadow-xl:  0 12px 24px rgba(0, 0, 0, 0.7);
 }
 
 /* ================================================================
