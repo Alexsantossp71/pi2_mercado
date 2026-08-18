@@ -123,50 +123,64 @@
 }
 
 /* ================================================================
-   DARK MODE (Baseado no #04261E da paleta para alto contraste)
+   DARK MODE (Refatorado para contraste máximo com a Paleta Adobe Color)
    ================================================================ */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --color-bg:           #021813;  /* Fundo ultradark derivado do #04261E */
-    --color-surface:      #04261e;  /* Superfície #04261E da paleta */
-    --color-surface-alt:  #084a24;  /* Superfície alternativa #084A24 */
-    --color-border:       #f2edd5;  /* Bordas creme bem visíveis no escuro */
-    --color-border-light: #f26716;
+    --color-bg:           #02140f;  /* Fundo ultradark verde floresta */
+    --color-surface:      #052c23;  /* Cartão #052C23 com excelente contraste */
+    --color-surface-alt:  #0a3f33;  /* Cartão secundário com borda */
+    --color-border:       #f26716;  /* Bordas Laranja Vibrante da Paleta */
+    --color-border-light: #084a24;
 
-    --color-text-primary:   #f2edd5;  /* Creme para texto principal no modo escuro */
-    --color-text-secondary: #e2d9b5;
-    --color-text-tertiary:  #a8a07c;
+    --color-text-primary:   #ffffff;  /* Branco puro para texto principal (100% legível) */
+    --color-text-secondary: #f2edd5;  /* Creme para texto secundário */
+    --color-text-tertiary:  #c7bfa3;  /* Creme médio para metadados */
     --color-text-inverse:   #04261e;
 
+    --color-primary-50:  #084a24;
+    --color-primary-100: #0a3f33;
     --color-primary-500: #34d399;
     --color-primary-600: #10b981;
+    --color-primary-700: #059669;
 
-    --shadow-sm:  0 2px 4px rgba(0, 0, 0, 0.4);
-    --shadow-md:  0 4px 8px rgba(0, 0, 0, 0.5);
-    --shadow-lg:  0 8px 16px rgba(0, 0, 0, 0.6);
-    --shadow-xl:  0 12px 24px rgba(0, 0, 0, 0.7);
+    --color-accent-500: #f26716;
+    --color-accent-600: #d95305;
+    --color-accent-700: #b34100;
+
+    --shadow-sm:  0 2px 4px rgba(0, 0, 0, 0.5);
+    --shadow-md:  0 4px 8px rgba(0, 0, 0, 0.6);
+    --shadow-lg:  0 8px 16px rgba(0, 0, 0, 0.7);
+    --shadow-xl:  0 12px 24px rgba(0, 0, 0, 0.8);
   }
 }
 
 .dark {
-  --color-bg:           #021813;
-  --color-surface:      #04261e;
-  --color-surface-alt:  #084a24;
-  --color-border:       #f2edd5;
-  --color-border-light: #f26716;
+  --color-bg:           #02140f;
+  --color-surface:      #052c23;
+  --color-surface-alt:  #0a3f33;
+  --color-border:       #f26716;
+  --color-border-light: #084a24;
 
-  --color-text-primary:   #f2edd5;
-  --color-text-secondary: #e2d9b5;
-  --color-text-tertiary:  #a8a07c;
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: #f2edd5;
+  --color-text-tertiary:  #c7bfa3;
   --color-text-inverse:   #04261e;
 
+  --color-primary-50:  #084a24;
+  --color-primary-100: #0a3f33;
   --color-primary-500: #34d399;
   --color-primary-600: #10b981;
+  --color-primary-700: #059669;
 
-  --shadow-sm:  0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-md:  0 4px 8px rgba(0, 0, 0, 0.5);
-  --shadow-lg:  0 8px 16px rgba(0, 0, 0, 0.6);
-  --shadow-xl:  0 12px 24px rgba(0, 0, 0, 0.7);
+  --color-accent-500: #f26716;
+  --color-accent-600: #d95305;
+  --color-accent-700: #b34100;
+
+  --shadow-sm:  0 2px 4px rgba(0, 0, 0, 0.5);
+  --shadow-md:  0 4px 8px rgba(0, 0, 0, 0.6);
+  --shadow-lg:  0 8px 16px rgba(0, 0, 0, 0.7);
+  --shadow-xl:  0 12px 24px rgba(0, 0, 0, 0.8);
 }
 
 /* ================================================================

@@ -162,22 +162,24 @@
 }
 
 .card-highlight {
-  background: var(--color-primary-50);
-  border: 2px solid var(--color-primary-500);
+  background: var(--color-surface-alt);
+  border: 2px solid var(--color-accent-500);
   border-radius: var(--radius-2xl);
   padding: var(--space-5);
 }
 
 .card-gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
-  color: var(--color-text-inverse);
+  background: linear-gradient(135deg, #084a24, #04261e);
+  color: #ffffff;
+  border: 2px solid #f26716;
   border-radius: var(--radius-2xl);
   padding: var(--space-6);
 }
 
 .card-gradient-accent {
-  background: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-700));
-  color: var(--color-text-inverse);
+  background: linear-gradient(135deg, #f26716, #d95305);
+  color: #ffffff;
+  border: 2px solid #ffffff;
   border-radius: var(--radius-2xl);
   padding: var(--space-6);
 }
