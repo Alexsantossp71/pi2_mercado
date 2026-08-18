@@ -1,0 +1,10 @@
+.env
+.env.local
+__pycache__/
+*.parcial
+*.progresso.json
+*.ids.json
+*.detalhe.json
+logs/
+scratch/
+node_modules/

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dispensa Planejada Santos — Comparador de Preços de Supermercado</title>
+  <meta name="description" content="Compare preços de supermercados em Santos-SP. Monte sua lista de compras e descubra onde fica mais barato: Carrefour, Pão de Açúcar ou Atacadão." />
+  <meta name="theme-color" content="#059669" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Dispensa Planejada Santos" />
+  <meta property="og:description" content="Comparador de preços de supermercado para Santos-SP. Economia real na sua compra." />
+  <meta property="og:type" content="website" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="css/design-system.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+</head>
+<body>
+
+<!-- Skip Link (Acessibilidade) -->
+<a href="#criador" class="skip-link">Pular para o conteúdo principal</a>
+
+<!-- ==================== LOADING OVERLAY ==================== -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="loading-spinner"></div>
+  <p>Carregando catálogo de produtos...</p>
+</div>
+
+<!-- ==================== HEADER ==================== -->
+<header class="header" role="banner">
+  <div class="container header-inner">
+    <div class="header-brand">
+      <h1>
+        <span class="brand-icon" aria-hidden="true">🛒</span>
+        Dispensa Planejada Santos
+      </h1>
+      <p>Comparador de Preços de Supermercado — Projeto Integrador UNIVESP</p>
+    </div>
+    <div class="header-meta">
+      <span class="pill">📍 Santos, SP</span>
+      <span class="pill">📏 Raio: 5 km</span>
+      <span class="pill">🗓️ Dados: 01/08/2026</span>
+      <button id="themeToggle" class="theme-toggle" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+        🌙
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== MAIN ==================== -->
+<main class="main" id="main" role="main">
+  <div class="container">
+
+    <!-- ==================== CRIADOR DE LISTA ==================== -->
+    <section id="criador" class="card section-creator" aria-labelledby="criadorTitulo">
+      <h2 id="criadorTitulo" class="section-title">Crie sua Lista de Compras</h2>
+      <p class="section-subtitle">Busque um produto pelo nome ou categoria e adicione à sua lista.</p>
+
+      <div class="filters-bar" style="margin-top: var(--space-5);">
+        <!-- Linha 1: Filtros de categoria e marca -->
+        <div class="filters-row">
+          <label for="selectCategoria" class="sr-only">Categoria</label>
+          <select id="selectCategoria" class="select" style="width: auto; min-width: 180px;">
+            <option value="">Todas as categorias</option>
+            <option value="Mercearia">Mercearia</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Hortifruti">Hortifruti</option>
+            <option value="Açougue e Peixaria">Açougue e Peixaria</option>
+            <option value="Frios e Laticínios">Frios e Laticínios</option>
+            <option value="Congelados">Congelados</option>
+            <option value="Padaria e Matinais">Padaria e Matinais</option>
+            <option value="Pratos Prontos e Massas Frescas">Pratos Prontos e Massas Frescas</option>
+            <option value="Limpeza e Lavanderia">Limpeza e Lavanderia</option>
+            <option value="Higiene e Perfumaria">Higiene e Perfumaria</option>
+            <option value="Bebê e Infantil">Bebê e Infantil</option>
+            <option value="Pet Care">Pet Care</option>
+            <option value="Suplementos Alimentares">Suplementos Alimentares</option>
+            <option value="Cuidados Sexuais">Cuidados Sexuais</option>
+            <option value="Utilidades Domésticas">Utilidades Domésticas</option>
+          </select>
+
+          <label for="selectMarca" class="sr-only">Marca</label>
+          <select id="selectMarca" class="select" style="width: auto; min-width: 160px;">
+            <option value="">Todas as marcas</option>
+          </select>
+        </div>
+
+        <!-- Linha 2: Campo de busca + quantidade + adicionar -->
+        <div class="search-row">
+          <div class="search-input-group input-group" style="flex: 1;">
+            <label for="campoBusca" class="sr-only">Buscar produto</label>
+            <span class="input-icon" aria-hidden="true">🔍</span>
+            <input id="campoBusca" type="text" autocomplete="off"
+                   placeholder="Digite o nome do produto..."
+                   class="input" role="combobox" aria-expanded="false" aria-controls="sugestoes" />
+            <div id="sugestoes" class="dropdown hidden" role="listbox"></div>
+          </div>
+
+          <div class="add-row">
+            <label for="selectQtd" class="sr-only">Quantidade</label>
+            <select id="selectQtd" class="select" style="width: auto; min-width: 80px;">
+              <option value="1">1 un</option><option value="2">2 un</option><option value="3">3 un</option>
+              <option value="4">4 un</option><option value="5">5 un</option><option value="6">6 un</option>
+              <option value="7">7 un</option><option value="8">8 un</option><option value="9">9 un</option>
+              <option value="10">10 un</option>
+            </select>
+            <button id="btnAdicionar" class="btn btn-primary" aria-label="Adicionar produto à lista">
+              + Adicionar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado vazio -->
+      <div id="listaVazia" class="empty-state" style="margin-top: var(--space-6);">
+        <span class="empty-icon" aria-hidden="true">🛍️</span>
+        <p>Sua lista está vazia. Adicione produtos para começar.</p>
+      </div>
+
+      <!-- Tabela da lista -->
+      <div id="tabelaLista" class="hidden" style="margin-top: var(--space-6);">
+        <div class="list-header">
+          <h3 style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+            Itens na lista <span id="contagemItens" class="badge-count"></span>
+          </h3>
+          <div style="display: flex; gap: var(--space-2);">
+            <button id="btnCompartilhar" class="btn btn-ghost btn-sm" aria-label="Compartilhar lista via WhatsApp" title="Compartilhar via WhatsApp">
+              📤 Compartilhar
+            </button>
+            <button id="btnLimparLista" class="btn-danger-text" aria-label="Limpar toda a lista">
+              🗑️ Limpar lista
+            </button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table" aria-label="Lista de compras">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th class="text-center">Qtd</th>
+                <th class="text-center col-mobile-hidden">Menor preço</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpoLista"></tbody>
+          </table>
+        </div>
+
+        <div class="cta-row">
+          <button id="btnCalcular" class="btn btn-cta" aria-label="Calcular melhor opção de compra">
+            🔍 CALCULAR MELHOR OPÇÃO DE COMPRA
+          </button>
+          <p class="cta-disclaimer">Preços reais coletados dos sites do Carrefour, Pão de Açúcar e Atacadão (todas as seções de mercado).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== RESULTADOS ==================== -->
+    <section id="resultados" class="hidden section-results" aria-labelledby="resultadosTitulo">
+      <div class="results-header">
+        <h2 id="resultadosTitulo" class="section-title" style="font-size: var(--font-size-2xl);">Resultados da Análise</h2>
+        <button id="btnNovaBusca" class="btn btn-ghost" aria-label="Fazer nova consulta">← Nova consulta</button>
+      </div>
+
+      <!-- OPÇÃO 1: Melhor Loja Única -->
+      <div class="card">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-4);">
+          <span class="badge badge-primary">OPÇÃO 1</span>
+          <div>
+            <h3 style="font-weight: var(--font-weight-bold); color: var(--color-text-primary);">Melhor Loja Única</h3>
+            <p class="section-subtitle">Compre toda a lista em um único mercado.</p>
+          </div>
+        </div>
+        <div id="resultadoLojaUnica" class="stores-grid"></div>
+      </div>
+
+      <!-- OPÇÃO 2: Multi-Lojas -->
+      <div class="card">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-4);">
+          <span class="badge badge-accent">OPÇÃO 2</span>
+          <div>
+            <h3 style="font-weight: var(--font-weight-bold); color: var(--color-text-primary);">Economia Máxima (Multi-Lojas)</h3>
+            <p class="section-subtitle">Divida a compra entre os mercados, levando cada produto onde está mais barato.</p>
+          </div>
+        </div>
+        <div class="multi-split">
+          <div class="card-gradient-accent split-summary">
+            <p class="label">Valor total otimizado</p>
+            <p id="valorTotalOtimizado" class="price-huge" style="margin-top: var(--space-1);">R$ 0,00</p>
+            <div class="savings-pill">
+              💰 Você economiza <span id="economiaMulti" class="savings-value">R$ 0,00</span>
+            </div>
+          </div>
+          <div id="divisaoLojas" class="split-stores"></div>
+        </div>
+      </div>
+
+      <!-- Comparativo Geral -->
+      <div class="card">
+        <h3 style="font-weight: var(--font-weight-bold); color: var(--color-text-primary);">Comparativo Geral</h3>
+        <p class="section-subtitle" style="margin-bottom: var(--space-4);">Valor total da lista se comprada 100% em cada mercado.</p>
+        <div id="comparativoGeral" class="stores-grid"></div>
+      </div>
+    </section>
+
+    <!-- ==================== MODO CHECKLIST ==================== -->
+    <section id="modoChecklist" class="hidden card section-checklist" aria-labelledby="checklistTitulo">
+      <div class="section-header">
+        <h2 id="checklistTitulo" class="section-title">Modo Checklist Presencial</h2>
+        <span id="checklistProgresso" class="checklist-progress"></span>
+      </div>
+      <p class="section-subtitle" style="margin-bottom: var(--space-4);">Marque os produtos conforme vai pegando no corredor. A lista é organizada por categoria.</p>
+      <div id="checklistCorpo" class="checklist-body"></div>
+      <button id="btnSairChecklist" class="btn btn-subtle btn-lg" style="margin-top: var(--space-6);" aria-label="Voltar aos resultados">
+        ← Voltar aos resultados
+      </button>
+    </section>
+
+  </div>
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer" role="contentinfo">
+  <p>Dispensa Planejada Santos — Projeto Integrador em Computação II (UNIVESP 2026.2)</p>
+  <p>Dados reais coletados dos sites Carrefour, Pão de Açúcar e Atacadão. Última coleta: 02/08/2026.</p>
+</footer>
+
+<!-- JavaScript Modules -->
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
