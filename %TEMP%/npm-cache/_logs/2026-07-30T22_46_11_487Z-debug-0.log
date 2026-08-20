@@ -1,0 +1,63 @@
+0 verbose cli F:\nodejs\node.exe C:\Users\arpt1\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.7.0
+2 info using node@v24.13.0
+3 silly config load:file:C:\Users\arpt1\AppData\Roaming\npm\node_modules\npm\npmrc
+4 silly config load:file:G:\pi 2 - 2026\.npmrc
+5 silly config load:file:C:\Users\arpt1\.npmrc
+6 silly config load:file:C:\Users\arpt1\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm exec @playwright/mcp@latest
+8 verbose argv "exec" "--yes" "--" "@playwright/mcp@latest"
+9 verbose logfile logs-max:10 dir:G:\pi 2 - 2026\%TEMP%\npm-cache\_logs\2026-07-30T22_46_11_487Z-
+10 verbose logfile G:\pi 2 - 2026\%TEMP%\npm-cache\_logs\2026-07-30T22_46_11_487Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 http fetch GET 200 https://registry.npmjs.org/npm 173ms
+14 http fetch GET 200 https://registry.npmjs.org/@playwright%2fmcp 431ms (cache miss)
+15 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+16 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+17 silly idealTree buildDeps
+18 silly fetch manifest @playwright/mcp@0.0.78
+19 silly packumentCache full:https://registry.npmjs.org/@playwright%2fmcp cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/@playwright%2fmcp 220ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/@playwright%2fmcp set size:undefined disposed:false
+22 silly placeDep ROOT @playwright/mcp@0.0.78 OK for:  want: 0.0.78
+23 silly fetch manifest playwright@1.62.0-alpha-1783623505000
+24 silly packumentCache full:https://registry.npmjs.org/playwright cache-miss
+25 silly fetch manifest playwright-core@1.62.0-alpha-1783623505000
+26 silly packumentCache full:https://registry.npmjs.org/playwright-core cache-miss
+27 http fetch GET 200 https://registry.npmjs.org/playwright-core 1199ms (cache miss)
+28 silly packumentCache full:https://registry.npmjs.org/playwright-core set size:undefined disposed:false
+29 http fetch GET 200 https://registry.npmjs.org/playwright 1283ms (cache miss)
+30 silly packumentCache full:https://registry.npmjs.org/playwright set size:undefined disposed:false
+31 silly placeDep ROOT playwright@1.62.0-alpha-1783623505000 OK for: @playwright/mcp@0.0.78 want: 1.62.0-alpha-1783623505000
+32 silly placeDep ROOT playwright-core@1.62.0-alpha-1783623505000 OK for: @playwright/mcp@0.0.78 want: 1.62.0-alpha-1783623505000
+33 silly fetch manifest fsevents@2.3.2
+34 silly packumentCache full:https://registry.npmjs.org/fsevents cache-miss
+35 http fetch GET 200 https://registry.npmjs.org/fsevents 558ms (cache miss)
+36 silly packumentCache full:https://registry.npmjs.org/fsevents set size:undefined disposed:false
+37 silly placeDep ROOT fsevents@2.3.2 OK for: playwright@1.62.0-alpha-1783623505000 want: 2.3.2
+38 silly reify moves {}
+39 verbose stack Error: Lock compromised
+39 verbose stack     at AbortSignal.<anonymous> (C:\Users\arpt1\AppData\Roaming\npm\node_modules\npm\node_modules\libnpmexec\lib\with-lock.js:53:30)
+39 verbose stack     at [nodejs.internal.kHybridDispatch] (node:internal/event_target:845:20)
+39 verbose stack     at AbortSignal.dispatchEvent (node:internal/event_target:778:26)
+39 verbose stack     at runAbort (node:internal/abort_controller:488:10)
+39 verbose stack     at abortSignal (node:internal/abort_controller:459:3)
+39 verbose stack     at AbortController.abort (node:internal/abort_controller:507:5)
+39 verbose stack     at Timeout.touchLock (C:\Users\arpt1\AppData\Roaming\npm\node_modules\npm\node_modules\libnpmexec\lib\with-lock.js:164:18)
+40 error code ECOMPROMISED
+41 error Lock compromised
+42 silly unfinished npm timer reify 1785451575927
+43 silly unfinished npm timer reify:createSparse 1785451578138
+44 verbose cwd G:\pi 2 - 2026
+45 verbose os Windows_NT 10.0.26200
+46 verbose node v24.13.0
+47 verbose npm  v11.7.0
+48 notice
+48 notice New minor version of npm available! 11.7.0 -> 11.19.0
+48 notice Changelog: https://github.com/npm/cli/releases/tag/v11.19.0
+48 notice To update run: npm install -g npm@11.19.0
+48 notice  { force: true, Symbol(proc-log.meta): true }
+49 verbose exit 1
+50 verbose code 1
+51 error A complete log of this run can be found in: G:\pi 2 - 2026\%TEMP%\npm-cache\_logs\2026-07-30T22_46_11_487Z-debug-0.log

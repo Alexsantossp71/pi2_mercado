@@ -56,7 +56,7 @@ HEADERS = {
 }
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ARQUIVO_PRODUTOS = os.path.join(RAIZ, "produtos_ampliado.json")
+ARQUIVO_PRODUTOS = os.path.join(RAIZ, "produtos_pa.json")
 ARQUIVO_PRECOS = os.path.join(RAIZ, "precos_pao_de_acucar_ampliado.json")
 IMAGEM_BASE = "https://static.paodeacucar.com"
 

@@ -46,7 +46,7 @@ def main() -> None:
         "sleep": 0.2,
         "timeout": 20,
         "checkpoint_a_cada": 20,
-        "arquivo_produtos": os.path.join(RAIZ, "produtos_ampliado.json"),
+        "arquivo_produtos": os.path.join(RAIZ, "produtos_atacadao.json"),
         "arquivo_precos": os.path.join(RAIZ, "precos_atacadao_ampliado.json"),
     })
 

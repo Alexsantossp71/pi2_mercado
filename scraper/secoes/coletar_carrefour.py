@@ -44,8 +44,8 @@ def main() -> None:
         "filtro_fq": "isAvailablePerSalesChannel_1:1",
         "sleep": 0.2,
         "timeout": 20,
-        "checkpoint_a_cada": 30,
-        "arquivo_produtos": os.path.join(RAIZ, "produtos_ampliado.json"),
+        "checkpoint_a_cada": 10,
+        "arquivo_produtos": os.path.join(RAIZ, "produtos_carrefour.json"),
         "arquivo_precos": os.path.join(RAIZ, "precos_carrefour_ampliado.json"),
     })
 

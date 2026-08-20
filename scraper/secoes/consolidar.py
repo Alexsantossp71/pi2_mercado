@@ -25,6 +25,12 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEBAPP = os.path.join(os.path.dirname(RAIZ), "webapp")
 
 ARQ_PRODUTOS = os.path.join(RAIZ, "produtos_ampliado.json")
+ARQUIVOS_PRODUTOS_LOJAS = [
+    os.path.join(RAIZ, "produtos_pa.json"),
+    os.path.join(RAIZ, "produtos_carrefour.json"),
+    os.path.join(RAIZ, "produtos_atacadao.json"),
+]
+
 LOJAS = {
     "carrefour": ("precos_carrefour_ampliado.json", "Carrefour"),
     "pao_de_acucar": ("precos_pao_de_acucar_ampliado.json", "Pão de Açúcar"),
@@ -57,7 +63,35 @@ def calcular_cobertura() -> dict:
 
 
 def main() -> None:
-    produtos = carregar(ARQ_PRODUTOS)
+    # Consolida catálogos das lojas
+    produtos_dict = {}
+    # Carrega primeiro o ampliado existente para não perder dados antigos, se existirem
+    for p in carregar(ARQ_PRODUTOS):
+        ean = p.get("gtin_ean")
+        if ean:
+            produtos_dict[ean] = p
+            
+    # Carrega e faz merge dos novos catálogos
+    for arq in ARQUIVOS_PRODUTOS_LOJAS:
+        for p in carregar(arq):
+            ean = p.get("gtin_ean")
+            if ean:
+                if ean not in produtos_dict:
+                    produtos_dict[ean] = p
+                else:
+                    # Melhoria opcional: se o catálogo novo tiver nome melhor, etc. 
+                    # Por enquanto apenas preenchemos se faltar
+                    if not produtos_dict[ean].get("nome_completo") and p.get("nome_completo"):
+                        produtos_dict[ean]["nome_completo"] = p["nome_completo"]
+                    if (produtos_dict[ean].get("marca") == "Não Informada") and p.get("marca"):
+                        produtos_dict[ean]["marca"] = p["marca"]
+
+    produtos = list(produtos_dict.values())
+    
+    # Salva o catálogo consolidado unificado na raiz do scraper
+    with open(ARQ_PRODUTOS, "w", encoding="utf-8") as f:
+        json.dump(produtos, f, indent=2, ensure_ascii=False)
+
     print("=== Consolidador Dispensa Planejada (ampliado) ===")
     print(f"Catálogo (produtos_ampliado.json): {len(produtos):,} produtos")
 
