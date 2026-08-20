@@ -315,11 +315,23 @@ export function initUI() {
   });
   selectMarca.addEventListener('change', () => renderSugestoes());
 
+  let debounceTimer;
   // Busca
   campoBusca.addEventListener('input', () => {
     produtoSelecionado = null;
     campoBusca.dataset.produtoId = '';
-    renderSugestoes();
+    
+    if (campoBusca.value.trim().length > 0) {
+      sugestoes.innerHTML = '<div class="dropdown-item" style="text-align: center; color: var(--color-text-muted);">⏳ Buscando...</div>';
+      sugestoes.classList.remove('hidden');
+    } else {
+      sugestoes.classList.add('hidden');
+    }
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      renderSugestoes();
+    }, 500); // Espera 500ms apÃ³s a digitaÃ§Ã£o para buscar
   });
   campoBusca.addEventListener('focus', () => renderSugestoes());
   campoBusca.addEventListener('blur', () => setTimeout(() => sugestoes.classList.add('hidden'), 150));
