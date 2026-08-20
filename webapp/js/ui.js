@@ -97,6 +97,8 @@ export function renderLista() {
   if (!lista.size) {
     listaVazia.classList.remove('hidden');
     tabelaLista.classList.add('hidden');
+    secaoResultados.classList.add('hidden');
+    secaoChecklist.classList.add('hidden');
     return;
   }
 
