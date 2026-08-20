@@ -34,7 +34,8 @@
 .header-brand p {
   margin-top: var(--space-1);
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.75);
+  color: #ffffff;
+  font-weight: var(--font-weight-medium);
 }
 
 .header-meta {

@@ -381,6 +381,7 @@ export function initUI() {
   const btnAbrirChecklist = document.createElement('button');
   btnAbrirChecklist.id = 'btnAbrirChecklist';
   btnAbrirChecklist.className = 'btn btn-primary btn-lg';
+  btnAbrirChecklist.style.marginTop = 'var(--space-6)';
   btnAbrirChecklist.textContent = '✅ Abrir Modo Checklist de Compras';
   btnAbrirChecklist.addEventListener('click', () => {
     if (!getLista().size) { alert('Adicione itens à lista primeiro.'); return; }
