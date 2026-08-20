@@ -3,7 +3,8 @@
    Dispensa Planejada Santos
    ================================================================ */
 
-import { LOJAS, CHAVES_LOJA, extrairMarcas } from './dataLoader.js';
+import { buscarMarcasAPI } from './api.js';
+import { LOJAS, CHAVES_LOJA } from './dataLoader.js';
 import { buscarProdutos } from './searchEngine.js';
 import { getLista, getTotalItens, adicionarItem, removerItem, alterarQtd, limparLista, gerarTextoCompartilhamento } from './shoppingList.js';
 import { fmtBRL, totalPorLoja, melhorLojaUnica, divisaoMultiLoja } from './priceCalculator.js';
@@ -37,17 +38,21 @@ let produtoSelecionado = null;
 /* ================================================================
    POPULADORES DE SELECT
    ================================================================ */
-export function popularMarcas(categoriaFiltro) {
-  const marcas = extrairMarcas(categoriaFiltro);
-  selectMarca.innerHTML = '<option value="">Todas as marcas</option>' +
-    marcas.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m}</option>`).join('');
+export async function popularMarcas(categoriaFiltro) {
+  try {
+    const marcas = await buscarMarcasAPI(categoriaFiltro);
+    selectMarca.innerHTML = '<option value="">Todas as marcas</option>' +
+      marcas.map(m => `<option value="${m.nome.replace(/"/g, '&quot;')}">${m.nome}</option>`).join('');
+  } catch (err) {
+    console.error('Erro ao popular marcas', err);
+  }
 }
 
 /* ================================================================
    AUTOCOMPLETE / SUGESTÕES
    ================================================================ */
-function renderSugestoes() {
-  const itens = buscarProdutos(campoBusca.value, selectCategoria.value, selectMarca.value);
+async function renderSugestoes() {
+  const itens = await buscarProdutos(campoBusca.value, selectCategoria.value, selectMarca.value);
 
   if (!itens.length) {
     sugestoes.classList.add('hidden');
@@ -320,17 +325,18 @@ export function initUI() {
   campoBusca.addEventListener('blur', () => setTimeout(() => sugestoes.classList.add('hidden'), 150));
 
   // Adicionar
-  btnAdicionar.addEventListener('click', () => {
+  btnAdicionar.addEventListener('click', async () => {
     let id = parseInt(campoBusca.dataset.produtoId || '');
-    if (!id) {
-      const [match] = buscarProdutos(campoBusca.value, selectCategoria.value, selectMarca.value);
+    let p = produtoSelecionado;
+
+    if (!id || !p) {
+      const resultados = await buscarProdutos(campoBusca.value, selectCategoria.value, selectMarca.value);
+      const match = resultados[0];
       if (!match) { alert('Produto não encontrado. Selecione uma sugestão.'); return; }
       selecionarProduto(match);
       id = match.id;
+      p = match;
     }
-    const { getBaseDados } = window._dp_modules;
-    const p = getBaseDados().find(x => x.id === id);
-    if (!p) { alert('Produto não encontrado.'); return; }
 
     const qtd = parseInt(selectQtd.value);
     adicionarItem(p, qtd);

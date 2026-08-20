@@ -4,7 +4,7 @@
    Inicializa todos os módulos na ordem correta.
    ================================================================ */
 
-import { carregarDadosReais, getBaseDados, extrairMarcas } from './dataLoader.js';
+import { buscarMarcasAPI } from './api.js';
 import { buscarProdutos } from './searchEngine.js';
 import { onListaChange, restaurarDoStorage } from './shoppingList.js';
 import { initUI, popularMarcas, renderLista } from './ui.js';
@@ -14,7 +14,6 @@ import { initUI, popularMarcas, renderLista } from './ui.js';
  * (necessário enquanto não migramos para bundler/framework)
  */
 window._dp_modules = {
-  getBaseDados,
   onListaChange
 };
 
@@ -28,22 +27,14 @@ async function init() {
   const loading = document.getElementById('loadingOverlay');
   if (loading) loading.classList.remove('hidden');
 
-  // 1. Carrega dados dos JSONs
-  const ok = await carregarDadosReais();
-
-  // Esconde loading
+  // 1. Omitimos o carregamento de JSON local! (Agora vai direto na API)
   if (loading) loading.classList.add('hidden');
 
-  if (!ok) {
-    alert('Falha ao carregar os dados. Verifique se os arquivos JSON estão na mesma pasta do index.html.');
-    return;
-  }
-
   // 2. Popula filtro de marcas
-  popularMarcas();
+  await popularMarcas();
 
   // 3. Restaura lista do localStorage
-  restaurarDoStorage((id) => getBaseDados().find(p => p.id === id));
+  await restaurarDoStorage();
 
   // 4. Inicializa event bindings da UI
   initUI();

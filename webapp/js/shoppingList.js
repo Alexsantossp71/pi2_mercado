@@ -104,26 +104,22 @@ function salvarNoStorage() {
 
 /**
  * Restaura a lista do localStorage.
- * Precisa ser chamada DEPOIS de carregarDadosReais() para validar os IDs.
- * @param {Function} buscarProdutoPorId - Função que recebe um ID e retorna o produto atualizado
  */
-export function restaurarDoStorage(buscarProdutoPorId) {
+export async function restaurarDoStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const data = JSON.parse(raw);
     data.forEach(({ id, qtd, produto }) => {
-      // Tenta buscar o produto atualizado na base; caso contrário, usa o salvo
-      const produtoAtual = buscarProdutoPorId(id) || produto;
-      if (produtoAtual) {
-        lista.set(id, { produto: produtoAtual, qtd });
+      if (produto) {
+        lista.set(id, { produto, qtd });
       }
     });
     if (lista.size > 0) {
       notificar();
     }
   } catch {
-    // Dados corrompidos — ignora
+    // Dados corrompidos - ignora
   }
 }
 
