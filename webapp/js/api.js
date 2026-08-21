@@ -1,6 +1,6 @@
 export const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
   ? 'http://localhost:8000' 
-  : 'https://pi-2-2026-backend.onrender.com';
+  : ''; // Use relative paths for Vercel deployment
 
 export async function buscarProdutosAPI(texto, categoria, marca, page = 1) {
   const params = new URLSearchParams();

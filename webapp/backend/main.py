@@ -12,8 +12,6 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
-from db import DB_PATH
-from importar_json_para_sqlite import run_etl
 from models import (
     BuscaResponse,
     CalculoRequest,
@@ -36,15 +34,17 @@ logger = logging.getLogger("dispensa.main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Inicializando backend Dispensa Planejada FastAPI SGBD...")
-    if not DB_PATH.exists():
-        logger.info("Banco de dados dispensa.db não encontrado. Executando ETL...")
-        try:
-            run_etl()
-        except Exception as e:
-            logger.error(f"Erro ao executar ETL na inicialização: {e}")
-    else:
-        logger.info(f"SGBD SQLite conectado com sucesso em: {DB_PATH}")
+    logger.info("Inicializando backend Dispensa Planejada FastAPI (Turso/LibSQL)...")
+    
+    # We can perform a quick connection test here
+    try:
+        from db import get_db_connection
+        conn = get_db_connection()
+        conn.close()
+        logger.info("Conexão com Turso LibSQL bem sucedida!")
+    except Exception as e:
+        logger.error(f"Erro ao conectar ao Turso: {e}")
+        
     yield
     logger.info("Encerrando backend...")
 
